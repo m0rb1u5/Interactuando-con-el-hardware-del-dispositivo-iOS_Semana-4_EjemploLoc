@@ -13,6 +13,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var latitudEtiqueta: UILabel!
     @IBOutlet weak var longitudEtiqueta: UILabel!
     @IBOutlet weak var exHorEtiqueta: UILabel!
+    @IBOutlet weak var nteMagEtiqueta: UILabel!
+    @IBOutlet weak var nteGeoEtiqueta: UILabel!
 
     private let manejador = CLLocationManager()
     
@@ -32,15 +34,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse {
             self.manejador.startUpdatingLocation()
+            self.manejador.startUpdatingHeading()
         }
         else {
-            self.manejador.startUpdatingLocation()
+            self.manejador.stopUpdatingLocation()
+            self.manejador.stopUpdatingHeading()
         }
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.latitudEtiqueta.text = "\(manager.location!.coordinate.latitude)"
         self.longitudEtiqueta.text = "\(manager.location!.coordinate.longitude)"
         self.exHorEtiqueta.text = "\(manager.location!.horizontalAccuracy)"
+    }
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        self.nteMagEtiqueta.text = "\(newHeading.magneticHeading)"
+        self.nteGeoEtiqueta.text = "\(newHeading.trueHeading)"
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         let alerta = UIAlertController(title: "ERROR", message: "error \(error.localizedDescription)", preferredStyle: .alert)
