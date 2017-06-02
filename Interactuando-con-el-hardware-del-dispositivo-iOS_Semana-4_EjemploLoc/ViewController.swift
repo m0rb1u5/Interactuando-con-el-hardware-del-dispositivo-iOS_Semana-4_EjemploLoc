@@ -7,19 +7,49 @@
 //
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CLLocationManagerDelegate {
+    @IBOutlet weak var latitudEtiqueta: UILabel!
+    @IBOutlet weak var longitudEtiqueta: UILabel!
+    @IBOutlet weak var exHorEtiqueta: UILabel!
 
+    private let manejador = CLLocationManager()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        self.manejador.delegate = self
+        self.manejador.desiredAccuracy = kCLLocationAccuracyBest
+        self.manejador.requestWhenInUseAuthorization()
     }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            self.manejador.startUpdatingLocation()
+        }
+        else {
+            self.manejador.startUpdatingLocation()
+        }
+    }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.latitudEtiqueta.text = "\(manager.location!.coordinate.latitude)"
+        self.longitudEtiqueta.text = "\(manager.location!.coordinate.longitude)"
+        self.exHorEtiqueta.text = "\(manager.location!.horizontalAccuracy)"
+    }
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let alerta = UIAlertController(title: "ERROR", message: "error \(error.localizedDescription)", preferredStyle: .alert)
+        let accionOK = UIAlertAction(title: "OK", style: .default, handler: {
+            accion in
+            //.
+        })
+        alerta.addAction(accionOK)
+        self.present(alerta, animated: true, completion: nil)
+    }
 }
 
